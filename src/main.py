@@ -134,13 +134,15 @@ def extract_companies(text: str) -> List[str]:
 def infer_level(text: str) -> str:
     """Infer job level from JD text."""
     text_lower = text.lower()
-    senior = sum(1 for kw in SENIOR_KEYWORDS if kw in text_lower)
-    mid = sum(1 for kw in MID_KEYWORDS if kw in text_lower)
-    junior = sum(1 for kw in JUNIOR_KEYWORDS if kw in text_lower)
-    if senior >= mid and senior >= junior:
+    senior_count = sum(1 for kw in SENIOR_KEYWORDS if kw in text_lower)
+    mid_count = sum(1 for kw in MID_KEYWORDS if kw in text_lower)
+    junior_count = sum(1 for kw in JUNIOR_KEYWORDS if kw in text_lower)
+    # Only override to senior/mid if explicit indicators present
+    if senior_count > mid_count and senior_count > junior_count:
         return "senior"
-    elif mid >= junior:
+    elif mid_count > junior_count:
         return "mid"
+    # Default: junior (most job descriptions that don't say senior are junior/mid anyway)
     return "junior"
 
 # ── TF-IDF Matching ────────────────────────────────────────────────────────

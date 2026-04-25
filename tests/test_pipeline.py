@@ -29,6 +29,7 @@ class TestSkillExtraction:
         assert "AWS" in skills
         assert "React" in skills
 
+
 class TestLevelInference:
     def test_senior(self):
         text = "We are looking for a senior engineer with 7+ years of Python experience."
@@ -43,8 +44,18 @@ class TestLevelInference:
         assert infer_level(text) == "mid"
 
     def test_default_unclear(self):
+        """When no keywords present at all, default to junior."""
         text = "The role involves writing Python code."
-        assert infer_level(text) == "junior"  # no indicators
+        assert infer_level(text) == "junior"
+
+    def test_explicit_senior_wins(self):
+        text = "Lead architect with 10+ years designing systems."
+        assert infer_level(text) == "senior"
+
+    def test_mid_beats_junior(self):
+        text = "Mid-level developer, 5 years experience, good Python skills."
+        assert infer_level(text) == "mid"
+
 
 class TestMatchScoring:
     def test_full_match(self):
@@ -52,7 +63,7 @@ class TestMatchScoring:
         jd = "Python Django React AWS Docker PostgreSQL Git CI/CD"
         score, matched, missing = compute_match_score(resume, jd)
         assert score == 100
-        assert len(matched) == 9
+        assert len(matched) == 8
         assert len(missing) == 0
 
     def test_partial_match(self):
@@ -71,6 +82,24 @@ class TestMatchScoring:
         assert len(matched) == 0
         assert len(missing) == 4
 
+    def test_empty_jd(self):
+        resume = "Python Django React"
+        jd = ""
+        score, matched, missing = compute_match_score(resume, jd)
+        assert score == 0
+        assert matched == []
+        assert missing == []
+
+    def test_resume_has_extra_skills(self):
+        """Resume has more skills than JD — should still be 100%."""
+        resume = "Python Django React AWS Docker PostgreSQL"
+        jd = "Python Django React"
+        score, matched, missing = compute_match_score(resume, jd)
+        assert score == 100
+        assert len(matched) == 3
+        assert len(missing) == 0
+
+
 class TestSuggestions:
     def test_kubernetes_suggestion(self):
         suggestions = generate_suggestions(["Kubernetes"])
@@ -87,3 +116,14 @@ class TestSuggestions:
         skills = ["Kubernetes", "GraphQL", "PostgreSQL", "Redis", "Kafka", "Terraform", "RabbitMQ"]
         suggestions = generate_suggestions(skills)
         assert len(suggestions) <= 5
+
+    def test_empty_list(self):
+        suggestions = generate_suggestions([])
+        assert suggestions == []
+
+    def test_aws_phrase(self):
+        suggestions = generate_suggestions(["AWS"])
+        assert len(suggestions) == 1
+        assert "AWS" in suggestions[0].gap
+        # phrase should mention AWS
+        assert "AWS" in suggestions[0].suggested_phrase
