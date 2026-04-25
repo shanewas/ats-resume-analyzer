@@ -258,7 +258,7 @@ async function handleResumeFile(input) {
 
   try {
     showLoading(true);
-    const res = await fetch('http://localhost:8000/upload/resume', {
+    const res = await fetch('/ats/upload/resume', {
       method: 'POST',
       body: formData,
     });
@@ -314,7 +314,7 @@ async function runAnalysis() {
   showError('');
 
   try {
-    const res = await fetch('http://localhost:8000/analyze', {
+    const res = await fetch('/ats/analyze', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ resume_text: resume, job_description_text: jd })
