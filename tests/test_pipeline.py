@@ -58,31 +58,37 @@ class TestLevelInference:
 
 
 class TestMatchScoring:
+    """Tests for compute_match_score — uses set-overlap percentage."""
+
     def test_full_match(self):
+        """Exact same skills → 100%"""
         resume = "Python Django React AWS Docker PostgreSQL Git CI/CD"
         jd = "Python Django React AWS Docker PostgreSQL Git CI/CD"
         score, matched, missing = compute_match_score(resume, jd)
         assert score == 100
-        assert len(matched) == 8
-        assert len(missing) == 0
+        assert set(matched) == set(["Python","Django","React","AWS","Docker","PostgreSQL","Git","CI/CD"])
+        assert missing == []
 
     def test_partial_match(self):
+        """Resume has 3 of 6 JD skills → 50%"""
         resume = "Python Django React"
         jd = "Python Django React AWS Docker PostgreSQL"
         score, matched, missing = compute_match_score(resume, jd)
         assert score == 50
-        assert len(matched) == 3
-        assert len(missing) == 3
+        assert set(matched) == set(["Python","Django","React"])
+        assert set(missing) == set(["AWS","Docker","PostgreSQL"])
 
     def test_no_match(self):
+        """No overlap → 0%"""
         resume = "Python Django"
         jd = "Rust Go Kubernetes Terraform"
         score, matched, missing = compute_match_score(resume, jd)
         assert score == 0
-        assert len(matched) == 0
-        assert len(missing) == 4
+        assert matched == []
+        assert set(missing) == set(["Rust","Go","Kubernetes","Terraform"])
 
     def test_empty_jd(self):
+        """Empty JD → 0%"""
         resume = "Python Django React"
         jd = ""
         score, matched, missing = compute_match_score(resume, jd)
@@ -91,13 +97,21 @@ class TestMatchScoring:
         assert missing == []
 
     def test_resume_has_extra_skills(self):
-        """Resume has more skills than JD — should still be 100%."""
+        """Resume has more than JD → 100% (all JD skills are covered)"""
         resume = "Python Django React AWS Docker PostgreSQL"
         jd = "Python Django React"
         score, matched, missing = compute_match_score(resume, jd)
         assert score == 100
-        assert len(matched) == 3
-        assert len(missing) == 0
+        assert set(matched) == set(["Python","Django","React"])
+        assert missing == []
+
+    def test_identical_order_independence(self):
+        """Order doesn't affect score"""
+        r1, j1 = "Python React AWS", "AWS Python React"
+        r2, j2 = "React AWS Python", "React AWS Python"
+        s1, *_ = compute_match_score(r1, j1)
+        s2, *_ = compute_match_score(r2, j2)
+        assert s1 == s2
 
 
 class TestSuggestions:
@@ -125,5 +139,12 @@ class TestSuggestions:
         suggestions = generate_suggestions(["AWS"])
         assert len(suggestions) == 1
         assert "AWS" in suggestions[0].gap
-        # phrase should mention AWS
         assert "AWS" in suggestions[0].suggested_phrase
+
+    def test_multiple_suggestions_order(self):
+        """First 5 skills in missing list should generate suggestions."""
+        suggestions = generate_suggestions(["Docker", "AWS", "Python", "Go", "Rust", "TensorFlow"])
+        assert len(suggestions) == 5
+        gaps = [s.gap for s in suggestions]
+        assert "Docker" in gaps
+        assert "TensorFlow" not in gaps  # Should be cut off after 5
