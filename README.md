@@ -4,7 +4,6 @@
 
 An ML-powered tool that analyzes how well your resume matches a job description: keyword overlap score, cosine similarity, missing skills, gap analysis, and rewrite suggestions.
 
-**Live demo:** https://187.127.110.92/ats/ui
 
 ```
 Paste resume + job description → Get match score % + cosine similarity + actionable suggestions
@@ -105,11 +104,11 @@ Returns: `{ name, skills, skill_weights, experience_years, education, soft_skill
 
 ### Clean UI — before analysis
 
-![ATS Resume Analyzer — clean state](screenshots/ui-clean.png)
+![ATS Resume Analyzer — clean state](screenshots/ats-ui-clean.png)
 
 ### Results — after analysis
 
-![ATS Resume Analyzer — results](screenshots/results.png)
+![ATS Resume Analyzer — results](screenshots/ats-results.png)
 
 ---
 
