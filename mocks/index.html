@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ATS Resume Analyzer</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: #0f1117;
+    color: #e0e4ec;
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+  .container { max-width: 900px; margin: 0 auto; padding: 2rem 1rem; }
+
+  header { text-align: center; margin-bottom: 3rem; }
+  header h1 { font-size: 2rem; font-weight: 700; color: #fff; margin-bottom: 0.5rem; }
+  header p { color: #888; font-size: 0.95rem; }
+  header .tagline { color: #00d4aa; }
+
+  .input-section { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
+  .input-box { background: #1a1d27; border: 1px solid #2a2d3a; border-radius: 12px; padding: 1.25rem; }
+  .input-box label { display: block; font-size: 0.85rem; color: #888; margin-bottom: 0.75rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; }
+  .input-box textarea {
+    width: 100%; background: #0f1117; border: 1px solid #2a2d3a; border-radius: 8px;
+    color: #e0e4ec; padding: 1rem; font-size: 0.9rem; font-family: 'Consolas', monospace;
+    resize: vertical; min-height: 180px; outline: none;
+  }
+  .input-box textarea:focus { border-color: #00d4aa; }
+  .input-box .hint { font-size: 0.75rem; color: #555; margin-top: 0.5rem; }
+
+  .file-drop {
+    border: 2px dashed #2a2d3a; border-radius: 8px; padding: 1rem; text-align: center;
+    cursor: pointer; margin-top: 0.75rem; transition: all 0.2s;
+  }
+  .file-drop:hover { border-color: #00d4aa; }
+  .file-drop input { display: none; }
+  .file-drop span { font-size: 0.85rem; color: #666; }
+  .file-drop .filename { color: #00d4aa; font-weight: 600; }
+
+  .actions { text-align: center; margin-bottom: 2rem; }
+  button {
+    background: #00d4aa; color: #0f1117; border: none; border-radius: 8px;
+    padding: 0.85rem 2.5rem; font-size: 1rem; font-weight: 700; cursor: pointer; transition: all 0.2s;
+  }
+  button:hover { background: #00f5c4; transform: translateY(-1px); }
+  button:disabled { background: #2a2d3a; color: #555; cursor: not-allowed; transform: none; }
+
+  .results { display: none; }
+  .results.visible { display: block; }
+
+  .score-card {
+    background: linear-gradient(135deg, #1a2336 0%, #0f1a2e 100%);
+    border: 1px solid #00d4aa33; border-radius: 16px; padding: 2rem;
+    text-align: center; margin-bottom: 2rem;
+  }
+  .score-number {
+    font-size: 4rem; font-weight: 800; color: #00d4aa; line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .score-label { font-size: 0.85rem; color: #888; margin-top: 0.5rem; text-transform: uppercase; letter-spacing: 0.1em; }
+  .score-bar {
+    height: 8px; background: #1a2336; border-radius: 4px; margin-top: 1.25rem; overflow: hidden;
+  }
+  .score-bar-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, #00d4aa, #00f5c4); transition: width 1s ease; }
+
+  .skills-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem; }
+  .skill-group { background: #1a1d27; border-radius: 12px; padding: 1.25rem; }
+  .skill-group h3 { font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.75rem; }
+  .skill-tag {
+    display: inline-block; background: #0f1117; border: 1px solid #2a2d3a;
+    border-radius: 20px; padding: 0.2rem 0.65rem; font-size: 0.8rem; margin: 0.2rem;
+  }
+  .skill-tag.matched { border-color: #00d4aa55; color: #00d4aa; }
+  .skill-tag.missing { border-color: #ff446655; color: #ff6680; background: #ff446610; }
+
+  .suggestions { background: #1a1d27; border-radius: 12px; padding: 1.5rem; }
+  .suggestions h3 { font-size: 0.85rem; color: #888; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1rem; }
+  .suggestion-item {
+    background: #0f1117; border-radius: 8px; padding: 1rem; margin-bottom: 0.75rem; border-left: 3px solid #00d4aa;
+  }
+  .suggestion-item .gap-label { font-size: 0.75rem; color: #ff6680; margin-bottom: 0.3rem; }
+  .suggestion-item .phrase { color: #e0e4ec; font-size: 0.88rem; }
+  .suggestion-item .phrase strong { color: #00d4aa; }
+
+  @media (max-width: 640px) {
+    .input-section { grid-template-columns: 1fr; }
+    .skills-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>ATS Resume Analyzer</h1>
+    <p class="tagline">See what the machine sees — before you apply</p>
+  </header>
+
+  <div class="input-section">
+    <div class="input-box">
+      <label>Resume</label>
+      <textarea id="resume-input" placeholder="Paste your resume text here...&#10;&#10;Or use the file upload below."></textarea>
+      <div class="file-drop" onclick="document.getElementById('resume-file').click()">
+        <input type="file" id="resume-file" accept=".pdf,.docx,.txt" onchange="handleFile(this, 'resume')">
+        <span id="resume-filename">📎 Upload PDF or DOCX</span>
+      </div>
+    </div>
+    <div class="input-box">
+      <label>Job Description</label>
+      <textarea id="jd-input" placeholder="Paste the job description here..."></textarea>
+      <div class="file-drop" onclick="document.getElementById('jd-file').click()">
+        <input type="file" id="jd-file" accept=".pdf,.txt" onchange="handleFile(this, 'jd')">
+        <span id="jd-filename">📎 Upload PDF or TXT</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button id="analyze-btn" onclick="analyze()">Analyze Match</button>
+  </div>
+
+  <div class="results" id="results">
+    <div class="score-card">
+      <div class="score-number" id="score-number">--</div>
+      <div class="score-label">Match Score</div>
+      <div class="score-bar"><div class="score-bar-fill" id="score-bar" style="width: 0%"></div></div>
+    </div>
+
+    <div class="skills-grid">
+      <div class="skill-group">
+        <h3>✅ Matched Skills</h3>
+        <div id="matched-skills"></div>
+      </div>
+      <div class="skill-group">
+        <h3>❌ Missing (Add These)</h3>
+        <div id="missing-skills"></div>
+      </div>
+      <div class="skill-group">
+        <h3>⚠️ Weak Mentions</h3>
+        <div id="weak-skills"></div>
+      </div>
+    </div>
+
+    <div class="suggestions">
+      <h3>💡 Rewrite Suggestions</h3>
+      <div id="suggestions-list"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+let resumeText = '';
+let jdText = '';
+
+function handleFile(input, type) {
+  const file = input.files[0];
+  if (!file) return;
+  const span = document.getElementById(type === 'resume' ? 'resume-filename' : 'jd-filename');
+  span.innerHTML = `<span class="filename">${file.name}</span>`;
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    if (type === 'resume') resumeText = e.target.result;
+    else jdText = e.target.result;
+  };
+  reader.readAsText(file);
+}
+
+async function analyze() {
+  const resume = resumeText || document.getElementById('resume-input').value.trim();
+  const jd = jdText || document.getElementById('jd-input').value.trim();
+
+  if (!resume || !jd) {
+    alert('Please provide both resume and job description text.');
+    return;
+  }
+
+  const btn = document.getElementById('analyze-btn');
+  btn.disabled = true;
+  btn.textContent = 'Analyzing...';
+
+  try {
+    const res = await fetch('http://localhost:8000/analyze', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ resume_text: resume, job_description_text: jd })
+    });
+    const data = await res.json();
+    renderResults(data);
+  } catch (e) {
+    // Demo fallback — show mock result if API not running
+    renderResults({
+      match_score: 68,
+      matched_skills: ['Python', 'C#', '.NET', 'REST API', 'Docker', 'Azure'],
+      missing_skills: ['Kubernetes', 'GraphQL', 'PostgreSQL'],
+      weak_skills: ['React (mentioned once, no depth)'],
+      suggestions: [
+        { gap: 'Kubernetes', phrase: 'Deployed microservices on Kubernetes clusters, managing 20+ pods across staging and production environments.' },
+        { gap: 'GraphQL', phrase: 'Designed GraphQL API layer aggregating data from 5+ microservices with sub-100ms p99 latency.' }
+      ]
+    });
+  }
+
+  btn.disabled = false;
+  btn.textContent = 'Analyze Match';
+}
+
+function renderResults(data) {
+  const results = document.getElementById('results');
+  results.classList.add('visible');
+
+  document.getElementById('score-number').textContent = data.match_score + '%';
+  document.getElementById('score-bar').style.width = data.match_score + '%';
+
+  const matched = document.getElementById('matched-skills');
+  matched.innerHTML = data.matched_skills.map(s => `<span class="skill-tag matched">${s}</span>`).join('');
+
+  const missing = document.getElementById('missing-skills');
+  missing.innerHTML = data.missing_skills.map(s => `<span class="skill-tag missing">${s}</span>`).join('');
+
+  const weak = document.getElementById('weak-skills');
+  weak.innerHTML = (data.weak_skills || []).map(s => `<span class="skill-tag">${s}</span>`).join('');
+
+  const sugg = document.getElementById('suggestions-list');
+  sugg.innerHTML = data.suggestions.map(item => `
+    <div class="suggestion-item">
+      <div class="gap-label">Gap: ${item.gap}</div>
+      <div class="phrase">Add: <strong>${item.suggested_phrase}</strong></div>
+    </div>
+  `).join('');
+}
+</script>
+</body>
+</html>
