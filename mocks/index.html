@@ -13,81 +13,149 @@
     min-height: 100vh;
     line-height: 1.6;
   }
-  .container { max-width: 900px; margin: 0 auto; padding: 2rem 1rem; }
+  .container { max-width: 940px; margin: 0 auto; padding: 2rem 1rem; }
 
   header { text-align: center; margin-bottom: 3rem; }
   header h1 { font-size: 2rem; font-weight: 700; color: #fff; margin-bottom: 0.5rem; }
   header p { color: #888; font-size: 0.95rem; }
   header .tagline { color: #00d4aa; }
 
-  .input-section { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
+  .input-section { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
   .input-box { background: #1a1d27; border: 1px solid #2a2d3a; border-radius: 12px; padding: 1.25rem; }
-  .input-box label { display: block; font-size: 0.85rem; color: #888; margin-bottom: 0.75rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; }
+  .input-box label {
+    display: block; font-size: 0.8rem; color: #888; margin-bottom: 0.75rem;
+    font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase;
+  }
   .input-box textarea {
     width: 100%; background: #0f1117; border: 1px solid #2a2d3a; border-radius: 8px;
-    color: #e0e4ec; padding: 1rem; font-size: 0.9rem; font-family: 'Consolas', monospace;
-    resize: vertical; min-height: 180px; outline: none;
+    color: #e0e4ec; padding: 0.85rem; font-size: 0.88rem; font-family: 'Consolas', monospace;
+    resize: vertical; min-height: 160px; outline: none;
   }
   .input-box textarea:focus { border-color: #00d4aa; }
-  .input-box .hint { font-size: 0.75rem; color: #555; margin-top: 0.5rem; }
+  .input-box .hint { font-size: 0.72rem; color: #555; margin-top: 0.4rem; }
 
   .file-drop {
-    border: 2px dashed #2a2d3a; border-radius: 8px; padding: 1rem; text-align: center;
-    cursor: pointer; margin-top: 0.75rem; transition: all 0.2s;
+    border: 2px dashed #2a2d3a; border-radius: 8px; padding: 0.85rem; text-align: center;
+    cursor: pointer; margin-top: 0.6rem; transition: all 0.2s;
   }
   .file-drop:hover { border-color: #00d4aa; }
   .file-drop input { display: none; }
-  .file-drop span { font-size: 0.85rem; color: #666; }
+  .file-drop span { font-size: 0.82rem; color: #666; }
   .file-drop .filename { color: #00d4aa; font-weight: 600; }
 
   .actions { text-align: center; margin-bottom: 2rem; }
   button {
     background: #00d4aa; color: #0f1117; border: none; border-radius: 8px;
-    padding: 0.85rem 2.5rem; font-size: 1rem; font-weight: 700; cursor: pointer; transition: all 0.2s;
+    padding: 0.85rem 2.5rem; font-size: 1rem; font-weight: 700; cursor: pointer;
+    transition: all 0.2s;
   }
   button:hover { background: #00f5c4; transform: translateY(-1px); }
   button:disabled { background: #2a2d3a; color: #555; cursor: not-allowed; transform: none; }
 
+  /* ── Results ── */
   .results { display: none; }
   .results.visible { display: block; }
 
   .score-card {
     background: linear-gradient(135deg, #1a2336 0%, #0f1a2e 100%);
-    border: 1px solid #00d4aa33; border-radius: 16px; padding: 2rem;
-    text-align: center; margin-bottom: 2rem;
+    border: 1px solid #00d4aa33; border-radius: 16px; padding: 1.75rem;
+    text-align: center; margin-bottom: 1.5rem;
   }
+  .score-row {
+    display: flex; align-items: center; justify-content: center; gap: 3rem;
+  }
+  .score-main { text-align: center; }
   .score-number {
     font-size: 4rem; font-weight: 800; color: #00d4aa; line-height: 1;
     font-variant-numeric: tabular-nums;
   }
-  .score-label { font-size: 0.85rem; color: #888; margin-top: 0.5rem; text-transform: uppercase; letter-spacing: 0.1em; }
-  .score-bar {
+  .score-label { font-size: 0.8rem; color: #888; margin-top: 0.4rem; text-transform: uppercase; letter-spacing: 0.1em; }
+
+  .score-divider {
+    width: 1px; height: 80px; background: #2a2d3a;
+  }
+
+  .score-cosine { text-align: center; }
+  .cosine-number {
+    font-size: 2.2rem; font-weight: 700; color: #e0e4ec; line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .cosine-label { font-size: 0.8rem; color: #888; margin-top: 0.4rem; text-transform: uppercase; letter-spacing: 0.08em; }
+  .cosine-bar {
+    width: 120px; height: 6px; background: #1a2336; border-radius: 3px;
+    margin: 0.6rem auto 0; overflow: hidden;
+  }
+  .cosine-bar-fill {
+    height: 100%; border-radius: 3px;
+    background: linear-gradient(90deg, #6B7280, #00d4aa);
+    transition: width 1s ease;
+  }
+
+  .score-bar-wrap {
     height: 8px; background: #1a2336; border-radius: 4px; margin-top: 1.25rem; overflow: hidden;
   }
-  .score-bar-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, #00d4aa, #00f5c4); transition: width 1s ease; }
+  .score-bar-fill {
+    height: 100%; border-radius: 4px;
+    background: linear-gradient(90deg, #00d4aa, #00f5c4);
+    transition: width 1s ease;
+  }
 
-  .skills-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem; }
-  .skill-group { background: #1a1d27; border-radius: 12px; padding: 1.25rem; }
-  .skill-group h3 { font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.75rem; }
+  .skills-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem;
+  }
+  .skill-group { background: #1a1d27; border-radius: 12px; padding: 1.1rem; }
+  .skill-group h3 {
+    font-size: 0.72rem; color: #888; text-transform: uppercase;
+    letter-spacing: 0.08em; margin-bottom: 0.75rem;
+  }
   .skill-tag {
     display: inline-block; background: #0f1117; border: 1px solid #2a2d3a;
-    border-radius: 20px; padding: 0.2rem 0.65rem; font-size: 0.8rem; margin: 0.2rem;
+    border-radius: 20px; padding: 0.2rem 0.6rem; font-size: 0.78rem; margin: 0.18rem;
   }
   .skill-tag.matched { border-color: #00d4aa55; color: #00d4aa; }
   .skill-tag.missing { border-color: #ff446655; color: #ff6680; background: #ff446610; }
+  .skill-tag.weak { border-color: #6B728055; color: #6B7280; }
 
-  .suggestions { background: #1a1d27; border-radius: 12px; padding: 1.5rem; }
-  .suggestions h3 { font-size: 0.85rem; color: #888; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1rem; }
-  .suggestion-item {
-    background: #0f1117; border-radius: 8px; padding: 1rem; margin-bottom: 0.75rem; border-left: 3px solid #00d4aa;
+  .suggestions { background: #1a1d27; border-radius: 12px; padding: 1.25rem; }
+  .suggestions h3 {
+    font-size: 0.8rem; color: #888; text-transform: uppercase;
+    letter-spacing: 0.08em; margin-bottom: 1rem;
   }
-  .suggestion-item .gap-label { font-size: 0.75rem; color: #ff6680; margin-bottom: 0.3rem; }
-  .suggestion-item .phrase { color: #e0e4ec; font-size: 0.88rem; }
+  .suggestion-item {
+    background: #0f1117; border-radius: 8px; padding: 0.9rem; margin-bottom: 0.65rem;
+    border-left: 3px solid #00d4aa;
+  }
+  .suggestion-item:last-child { margin-bottom: 0; }
+  .suggestion-item .gap-label { font-size: 0.72rem; color: #ff6680; margin-bottom: 0.3rem; }
+  .suggestion-item .phrase { color: #ccc; font-size: 0.86rem; line-height: 1.5; }
   .suggestion-item .phrase strong { color: #00d4aa; }
+
+  /* loading state */
+  .loading-overlay {
+    display: none; position: fixed; inset: 0; background: #0f1117cc;
+    align-items: center; justify-content: center; z-index: 100;
+  }
+  .loading-overlay.visible { display: flex; }
+  .spinner {
+    width: 48px; height: 48px; border: 3px solid #2a2d3a;
+    border-top-color: #00d4aa; border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* error banner */
+  .error-banner {
+    display: none; background: #ff446610; border: 1px solid #ff446655;
+    border-radius: 8px; padding: 0.75rem 1rem; margin-bottom: 1rem;
+    color: #ff6680; font-size: 0.85rem;
+  }
+  .error-banner.visible { display: block; }
 
   @media (max-width: 640px) {
     .input-section { grid-template-columns: 1fr; }
     .skills-grid { grid-template-columns: 1fr; }
+    .score-row { flex-direction: column; gap: 1.5rem; }
+    .score-divider { width: 80px; height: 1px; }
   }
 </style>
 </head>
@@ -98,43 +166,57 @@
     <p class="tagline">See what the machine sees — before you apply</p>
   </header>
 
+  <div class="error-banner" id="error-banner"></div>
+
   <div class="input-section">
     <div class="input-box">
       <label>Resume</label>
       <textarea id="resume-input" placeholder="Paste your resume text here...&#10;&#10;Or use the file upload below."></textarea>
       <div class="file-drop" onclick="document.getElementById('resume-file').click()">
-        <input type="file" id="resume-file" accept=".pdf,.docx,.txt" onchange="handleFile(this, 'resume')">
-        <span id="resume-filename">📎 Upload PDF or DOCX</span>
+        <input type="file" id="resume-file" accept=".pdf,.docx,.doc,.txt" onchange="handleResumeFile(this)">
+        <span id="resume-filename">Upload resume (PDF, DOCX, or TXT)</span>
       </div>
     </div>
     <div class="input-box">
       <label>Job Description</label>
       <textarea id="jd-input" placeholder="Paste the job description here..."></textarea>
       <div class="file-drop" onclick="document.getElementById('jd-file').click()">
-        <input type="file" id="jd-file" accept=".pdf,.txt" onchange="handleFile(this, 'jd')">
-        <span id="jd-filename">📎 Upload PDF or TXT</span>
+        <input type="file" id="jd-file" accept=".pdf,.txt" onchange="handleJDFile(this)">
+        <span id="jd-filename">Upload JD (PDF or TXT)</span>
       </div>
     </div>
   </div>
 
   <div class="actions">
-    <button id="analyze-btn" onclick="analyze()">Analyze Match</button>
+    <button id="analyze-btn" onclick="runAnalysis()">Analyze Match</button>
   </div>
 
   <div class="results" id="results">
+    <!-- Score card with both metrics -->
     <div class="score-card">
-      <div class="score-number" id="score-number">--</div>
-      <div class="score-label">Match Score</div>
-      <div class="score-bar"><div class="score-bar-fill" id="score-bar" style="width: 0%"></div></div>
+      <div class="score-row">
+        <div class="score-main">
+          <div class="score-number" id="match-score">--</div>
+          <div class="score-label">Match Score</div>
+        </div>
+        <div class="score-divider"></div>
+        <div class="score-cosine">
+          <div class="cosine-number" id="cosine-val">--</div>
+          <div class="cosine-label">Cosine Similarity</div>
+          <div class="cosine-bar"><div class="cosine-bar-fill" id="cosine-bar" style="width:0%"></div></div>
+        </div>
+      </div>
+      <div class="score-bar-wrap"><div class="score-bar-fill" id="score-bar" style="width:0%"></div></div>
     </div>
 
+    <!-- Skills breakdown -->
     <div class="skills-grid">
       <div class="skill-group">
         <h3>✅ Matched Skills</h3>
         <div id="matched-skills"></div>
       </div>
       <div class="skill-group">
-        <h3>❌ Missing (Add These)</h3>
+        <h3>❌ Missing — Add These</h3>
         <div id="missing-skills"></div>
       </div>
       <div class="skill-group">
@@ -143,6 +225,7 @@
       </div>
     </div>
 
+    <!-- Rewrite suggestions -->
     <div class="suggestions">
       <h3>💡 Rewrite Suggestions</h3>
       <div id="suggestions-list"></div>
@@ -150,36 +233,85 @@
   </div>
 </div>
 
+<!-- Loading overlay -->
+<div class="loading-overlay" id="loading">
+  <div class="spinner"></div>
+</div>
+
 <script>
+// ── State ──────────────────────────────────────────────────────────────────
 let resumeText = '';
 let jdText = '';
+let resumeFileName = '';
 
-function handleFile(input, type) {
+// ── File handlers ───────────────────────────────────────────────────────────
+
+async function handleResumeFile(input) {
   const file = input.files[0];
   if (!file) return;
-  const span = document.getElementById(type === 'resume' ? 'resume-filename' : 'jd-filename');
-  span.innerHTML = `<span class="filename">${file.name}</span>`;
+  resumeFileName = file.name;
+  document.getElementById('resume-filename').innerHTML =
+    `<span class="filename">${file.name}</span>`;
 
+  const formData = new FormData();
+  formData.append('file', file);
+
+  try {
+    showLoading(true);
+    const res = await fetch('http://localhost:8000/upload/resume', {
+      method: 'POST',
+      body: formData,
+    });
+    if (!res.ok) throw new Error('Upload failed');
+    const data = await res.json();
+    resumeText = data.raw_text_preview || '';
+    // Also update the textarea with extracted text
+    document.getElementById('resume-input').value = resumeText;
+    showError('');
+  } catch (e) {
+    // Fallback: try reading as plain text
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      resumeText = e.target.result;
+      document.getElementById('resume-input').value = resumeText;
+    };
+    reader.readAsText(file);
+    showError('File uploaded (direct read — API not running)');
+  } finally {
+    showLoading(false);
+  }
+}
+
+async function handleJDFile(input) {
+  const file = input.files[0];
+  if (!file) return;
+  document.getElementById('jd-filename').innerHTML =
+    `<span class="filename">${file.name}</span>`;
+
+  // Read as text directly (no API needed for plain text JD)
   const reader = new FileReader();
   reader.onload = (e) => {
-    if (type === 'resume') resumeText = e.target.result;
-    else jdText = e.target.result;
+    jdText = e.target.result;
+    document.getElementById('jd-input').value = jdText;
   };
   reader.readAsText(file);
 }
 
-async function analyze() {
+// ── Analysis ────────────────────────────────────────────────────────────────
+
+async function runAnalysis() {
   const resume = resumeText || document.getElementById('resume-input').value.trim();
   const jd = jdText || document.getElementById('jd-input').value.trim();
 
   if (!resume || !jd) {
-    alert('Please provide both resume and job description text.');
+    showError('Please provide both resume and job description text.');
     return;
   }
 
   const btn = document.getElementById('analyze-btn');
   btn.disabled = true;
   btn.textContent = 'Analyzing...';
+  showError('');
 
   try {
     const res = await fetch('http://localhost:8000/analyze', {
@@ -187,49 +319,88 @@ async function analyze() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ resume_text: resume, job_description_text: jd })
     });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || `HTTP ${res.status}`);
+    }
+
     const data = await res.json();
     renderResults(data);
   } catch (e) {
-    // Demo fallback — show mock result if API not running
+    // Demo fallback — when API not running
     renderResults({
       match_score: 68,
+      cosine_similarity: 0.734,
       matched_skills: ['Python', 'C#', '.NET', 'REST API', 'Docker', 'Azure'],
       missing_skills: ['Kubernetes', 'GraphQL', 'PostgreSQL'],
-      weak_skills: ['React (mentioned once, no depth)'],
+      weak_skills: ['React (mentioned once — add depth)'],
       suggestions: [
-        { gap: 'Kubernetes', phrase: 'Deployed microservices on Kubernetes clusters, managing 20+ pods across staging and production environments.' },
-        { gap: 'GraphQL', phrase: 'Designed GraphQL API layer aggregating data from 5+ microservices with sub-100ms p99 latency.' }
+        { gap: 'Kubernetes', suggested_phrase: 'Deployed and managed containerized applications on Kubernetes clusters, achieving 99.9% uptime across production environments.' },
+        { gap: 'GraphQL', suggested_phrase: 'Designed and implemented GraphQL APIs aggregating data from multiple microservices with sub-100ms p99 latency.' },
+        { gap: 'PostgreSQL', suggested_phrase: 'Built and optimized PostgreSQL schemas for high-throughput transaction processing, handling 10K+ queries per second.' }
       ]
     });
+    showError('Demo mode — API not running. Showing sample data.');
   }
 
   btn.disabled = false;
   btn.textContent = 'Analyze Match';
 }
 
+// ── Render results ─────────────────────────────────────────────────────────
+
 function renderResults(data) {
   const results = document.getElementById('results');
   results.classList.add('visible');
 
-  document.getElementById('score-number').textContent = data.match_score + '%';
+  // Match score
+  document.getElementById('match-score').textContent = data.match_score + '%';
   document.getElementById('score-bar').style.width = data.match_score + '%';
 
-  const matched = document.getElementById('matched-skills');
-  matched.innerHTML = data.matched_skills.map(s => `<span class="skill-tag matched">${s}</span>`).join('');
+  // Cosine similarity
+  const cos = typeof data.cosine_similarity === 'number' ? data.cosine_similarity : 0;
+  document.getElementById('cosine-val').textContent = cos.toFixed(3);
+  document.getElementById('cosine-bar').style.width = Math.round(cos * 100) + '%';
 
-  const missing = document.getElementById('missing-skills');
-  missing.innerHTML = data.missing_skills.map(s => `<span class="skill-tag missing">${s}</span>`).join('');
+  // Matched skills
+  const matchedEl = document.getElementById('matched-skills');
+  matchedEl.innerHTML = (data.matched_skills || []).map(s =>
+    `<span class="skill-tag matched">${s}</span>`
+  ).join('');
 
-  const weak = document.getElementById('weak-skills');
-  weak.innerHTML = (data.weak_skills || []).map(s => `<span class="skill-tag">${s}</span>`).join('');
+  // Missing skills
+  const missingEl = document.getElementById('missing-skills');
+  missingEl.innerHTML = (data.missing_skills || []).map(s =>
+    `<span class="skill-tag missing">${s}</span>`
+  ).join('');
 
-  const sugg = document.getElementById('suggestions-list');
-  sugg.innerHTML = data.suggestions.map(item => `
+  // Weak skills
+  const weakEl = document.getElementById('weak-skills');
+  weakEl.innerHTML = (data.weak_skills || []).map(s =>
+    `<span class="skill-tag weak">${s}</span>`
+  ).join('');
+
+  // Suggestions
+  const suggEl = document.getElementById('suggestions-list');
+  suggEl.innerHTML = (data.suggestions || []).map(item => `
     <div class="suggestion-item">
       <div class="gap-label">Gap: ${item.gap}</div>
       <div class="phrase">Add: <strong>${item.suggested_phrase}</strong></div>
     </div>
   `).join('');
+}
+
+// ── Helpers ─────────────────────────────────────────────────────────────────
+
+function showError(msg) {
+  const el = document.getElementById('error-banner');
+  el.textContent = msg;
+  el.className = msg ? 'error-banner visible' : 'error-banner';
+}
+
+function showLoading(show) {
+  document.getElementById('loading').className = show ? 'loading-overlay visible' : 'loading-overlay';
 }
 </script>
 </body>

@@ -5,10 +5,10 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Download spaCy model (small model for skill extraction)
-RUN python -m spacy download en_core_web_sm || true
-
 COPY src/ ./src/
+COPY mocks/ ./mocks/
+
+ENV PYTHONPATH=/app/src
 
 EXPOSE 8000
 

@@ -11,7 +11,7 @@ from fastapi import FastAPI, HTTPException, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 
-from models import AnalyzeRequest, AnalysisResult, ResumeParsed, JobDescriptionParsed, Suggestion
+from models import AnalyzeRequest, AnalysisResult, Suggestion
 
 # ── File Parsing ─────────────────────────────────────────────────────────────
 
@@ -535,6 +535,7 @@ async def analyze(req: AnalyzeRequest):
 
     return AnalysisResult(
         match_score=score,
+        cosine_similarity=round(cos_sim, 4),
         matched_skills=matched,
         missing_skills=missing,
         weak_skills=weak,
