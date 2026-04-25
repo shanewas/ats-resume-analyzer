@@ -1,6 +1,6 @@
 fastapi==0.115.0
 uvicorn==0.30.0
-python-multipart==0.0.9
+python-multipart==0.0.26
 pydantic==2.8.2
 spacy==3.8.2
 scikit-learn==1.5.1
