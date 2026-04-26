@@ -2,7 +2,7 @@
 
 Drop your resume and a job description in, get back a match percentage, find what you're missing, and see exactly what to fix.
 
-**Use it:** https://atsresume.duckdns.org/ui
+**Use it:** https://atsresume.duckdns.org/ats/ui
 
 ---
 
